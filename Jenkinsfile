@@ -33,7 +33,7 @@ pipeline {
 
         stage('CHECKSTYLE ANALYSIS') {
             steps {
-                sh 'mvn checkstyle:checkstyle'
+                sh "mvn checkstyle:checkstyle"
             }
         }
 
@@ -52,6 +52,26 @@ pipeline {
                    -Dsonar.jacoco.reportsPath=target/jacoco.exec \
                    -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml'''
                 }
+            }
+        }
+
+        stage('Nexus Upload Artifact') {
+            steps{
+                nexusArtifactUploader(
+                nexusVersion: 'nexus3',
+                protocol: "http",
+                nexusUrl: '172.31.4.237:8081',
+                groupId: 'artifact upload',
+                version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
+                repository: 'artifact-repo',
+                credentialsId: 'nexuslogin',
+                artifacts: [
+                  [artifactId: "ci-jenkins",
+                  classifier: '',
+                  file: 'target/vprofile-v2.war',
+                  type: 'war']
+                ]
+               )
             }
         }
     }
