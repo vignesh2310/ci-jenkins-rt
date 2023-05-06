@@ -63,7 +63,7 @@ pipeline {
                 nexusUrl: '172.31.4.237:8081',
                 groupId: 'artifact upload',
                 version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
-                repository: 'artifact-repo',
+                repository: 'artifact-repo', // maven2(hosted) repo name
                 credentialsId: 'nexuslogin',
                 artifacts: [
                   [artifactId: "ci-jenkins",
