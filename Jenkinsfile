@@ -41,7 +41,7 @@ pipeline {
             environment {
               scannerHome = tool 'sonarqube scanner' // the name you have given the Sonar Scanner (in Global Tool Configuration)
             }
-            steps {
+            steps { // the name you have given the Sonar Server (in configure system)
                 withSonarQubeEnv(installationName: 'sonarqube server') {
                    sh '''${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=ci-code-report \
                    -Dsonar.projectName=ci-code-report-jenkins \
