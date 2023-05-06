@@ -1,3 +1,8 @@
+def COLOR_MAP = [
+    'SUCCESS' : 'GOOD'
+    'FAILURE' : 'DANGER'
+]
+
 pipeline {
     agent any
     tools {
@@ -61,18 +66,27 @@ pipeline {
                 nexusVersion: 'nexus3',
                 protocol: "http",
                 nexusUrl: '172.31.4.237:8081',
-                groupId: 'artifact upload',
+                groupId: 'artifact upload', // under groupId folder comes artifactId folder
                 version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
                 repository: 'artifact-repo', // maven2(hosted) repo name
                 credentialsId: 'nexuslogin',
                 artifacts: [
                   [artifactId: "ci-jenkins",
                   classifier: '',
-                  file: 'target/vprofile-v2.war',
+                  file: 'target/vprofile-v2.war', // artifact path in jenkins
                   type: 'war']
                 ]
                )
             }
         }
+    }
+
+    post {
+      always {
+        echo "slack notification for ci-jenkins"
+        slackSend channel: "#ci-jenkins"
+           color: COLOR_MAP[currentBuild.currentResult],
+           message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} \n More Info At: ${env.BUILD_URL}"
+      }
     }
 }
